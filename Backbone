@@ -1,0 +1,13 @@
+---
+clusters:
+  - photocache:
+      image: philcollins/photocache
+      ports:
+        - port: 80
+
+balancers:
+  - photocache:
+      synapses:
+        - resource: photocache
+          protocol: http
+          remote_port: 80

@@ -1,0 +1,10 @@
+package: github.com/ssalevan/photocache
+license: MIT
+owners:
+- name: Steve Salevan
+  email: steve.salevan@gmail.com
+import:
+- package: github.com/jinzhu/copier
+- package: github.com/sirupsen/logrus
+  version: ^1.0.2
+- package: gopkg.in/yaml.v2
