@@ -9,7 +9,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/ssalevan/photocache/photocache"
+	"github.com/ssalevan/photocache/common"
+	"github.com/ssalevan/photocache/config"
+	cache "github.com/ssalevan/photocache/photocache"
 )
 
 const (
@@ -21,7 +23,7 @@ func Launch(cfg *config.Config) {
 	rand.Seed(time.Now().Unix())
 
 	// Starts the safe process.
-	photocache := photocache.NewPhotocache(cfg)
+	photocache := cache.NewPhotocache(cfg)
 	common.StartProcess(photocache)
 
 	// Waits to receive an interruption signal.

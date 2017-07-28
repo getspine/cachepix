@@ -1,12 +1,10 @@
 package config
 
 import (
-	"encoding/json"
 	"io/ioutil"
 	"os"
 
 	"github.com/jinzhu/copier"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
@@ -33,14 +31,13 @@ type Config struct {
 
 var DefaultConfig = &Config{
 	EnableHTTPS:        false,
-	HTTPListenPort:     80,
+	HTTPListenPort:     12345,
 	HTTPSListenPort:    443,
 	FileServerPort:     20025,
 	HealthcheckPort:    20026,
 	HealthcheckTLSPort: 20027,
 	SSLCert:            "/etc/photocache/photocache.crt",
 	SSLKey:             "/etc/photocache/photocache.key",
-	StaticDir:          "/var/lib/photocache",
 	Cachers:            []string{"file"},
 	Fetchers:           []string{"photobucket"},
 	FileCacher:         DefaultFileCacherConfig,
@@ -71,7 +68,7 @@ func FromFile(filePath string) (*Config, error) {
 		return nil, err
 	}
 
-	_, err := os.Stat(filePath)
+	_, err = os.Stat(filePath)
 	if err == nil {
 		err := conf.FromFile(filePath)
 		if err != nil {

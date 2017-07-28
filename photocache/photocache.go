@@ -1,15 +1,11 @@
 package cache
 
 import (
-	"filepath"
 	"fmt"
-	"math/rand"
 	"mime"
-	"net"
 	"net/http"
-	"net/http/httputil"
+	"path/filepath"
 	"strconv"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -31,31 +27,31 @@ type Photocache struct {
 
 // NewPhotocache : crates a new Photocache process with a config
 func NewPhotocache(config *config.Config) *Photocache {
-	router := &Photocache{
+	photocache := &Photocache{
 		config: config,
 	}
-	router.InitProcess("Photocache")
-	router.Init()
-	return router
+	photocache.InitProcess("Photocache")
+	photocache.Init()
+	return photocache
 }
 
-func (r *Photocache) Init() {
-	for _, fetcherName := range r.config.Fetchers {
+func (p *Photocache) Init() {
+	for _, fetcherName := range p.config.Fetchers {
 		if fetcherName == "photobucket" {
-			r.fetchers = append(r.fetchers,
-				fetchers.NewPhotobucketFetcher(r.config.PhotobucketFetcher))
+			p.fetchers = append(p.fetchers,
+				fetchers.NewPhotobucketFetcher(p.config.PhotobucketFetcher))
 		}
 	}
 
-	for _, cacherName := range r.config.Cachers {
+	for _, cacherName := range p.config.Cachers {
 		if cacherName == "file" {
-			r.cachers = append(r.cachers, cachers.NewFileCacher(r.config.FileCacher))
+			p.cachers = append(p.cachers, cachers.NewFileCacher(p.config.FileCacher))
 		}
 	}
 }
 
 func (r *Photocache) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	mediaURL := req.URL.Path
+	mediaURL := req.URL.Path[1:]
 
 	var data []byte
 	var err error
@@ -131,14 +127,6 @@ func (r *Photocache) Run() {
 			healthcheckServer)
 		if err != nil {
 			log.Fatalf("Could not start healthcheck server: %v", err)
-		}
-	}()
-
-	go func() {
-		log.Infof("Starting Photocache file server on: %s", r.fileServer.Host)
-		err := http.ListenAndServe(r.fileServer.Host, r.fileServer)
-		if err != nil {
-			log.Fatalf("Could not start file server: %v", err)
 		}
 	}()
 

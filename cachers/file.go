@@ -1,4 +1,4 @@
-package cacher
+package cachers
 
 import (
 	"io/ioutil"
@@ -22,7 +22,7 @@ type FileCacher struct {
 
 func (f *FileCacher) Get(url string) ([]byte, error) {
 	fileLocation := path.Join(f.conf.StorageDir, url)
-	_, err := os.Stat(filePath)
+	_, err := os.Stat(fileLocation)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -32,9 +32,9 @@ func (f *FileCacher) Get(url string) ([]byte, error) {
 func (f *FileCacher) Hit(url string) bool {
 	fileLocation := path.Join(f.conf.StorageDir, url)
 
-	file, err := os.Stat(filePath)
+	file, err := os.Stat(fileLocation)
 	if err == nil {
-		cutoffTime := time.Now().UTC().Add((-1 * f.conf.TTLSecs) * time.Second)
+		cutoffTime := time.Now().UTC().Add(time.Duration(-1*f.conf.TTLSecs) * time.Second)
 		if f.conf.EnableTTL && file.ModTime().Before(cutoffTime) {
 			return false
 		}
@@ -54,7 +54,7 @@ func (f *FileCacher) Set(url string, contents []byte) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(fileLocation, contents, 644)
+	err = ioutil.WriteFile(fileLocation, contents, os.FileMode(0644))
 	if err != nil {
 		return err
 	}

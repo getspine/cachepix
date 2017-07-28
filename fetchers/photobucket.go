@@ -15,12 +15,14 @@ var URLEmbeddedRegex = regexp.MustCompile(`(.*.photobucket.com/albums/.*/.*/)`)
 
 func NewPhotobucketFetcher(conf *config.PhotobucketFetcherConfig) *PhotobucketFetcher {
 	return &PhotobucketFetcher{
-		conf: conf,
+		conf:       conf,
+		httpClient: &http.Client{},
 	}
 }
 
 type PhotobucketFetcher struct {
-	conf *config.PhotobucketFetcherConfig
+	conf       *config.PhotobucketFetcherConfig
+	httpClient *http.Client
 }
 
 func (f *PhotobucketFetcher) MatchesURL(url string) bool {
@@ -28,7 +30,7 @@ func (f *PhotobucketFetcher) MatchesURL(url string) bool {
 }
 
 func (f *PhotobucketFetcher) Get(url string) ([]byte, error) {
-	if !URLEmbeddedRegex.matches(url) || !strings.HasPrefix(url, f.conf.Prefix) {
+	if !URLEmbeddedRegex.MatchString(url) || !strings.HasPrefix(url, f.conf.Prefix) {
 		return []byte{}, errors.New("Invalid URL")
 	}
 
@@ -37,13 +39,17 @@ func (f *PhotobucketFetcher) Get(url string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	albumURL := URLEmbeddedRegex.FindString(url)
-	req.Header.Set("Referer", albumURL)
+	albumURL := strings.Replace(URLEmbeddedRegex.FindString(url), "i", "s", 1)
+	req.Header.Set("Referer", fmt.Sprintf("http://%s", albumURL))
 
-	response, err := http.Client.Do(req)
+	response, err := f.httpClient.Do(req)
 	if err != nil {
 		return []byte{}, err
 	}
 
 	return ioutil.ReadAll(response.Body)
+}
+
+func (f *PhotobucketFetcher) Name() string {
+	return "photobucket"
 }

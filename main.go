@@ -16,7 +16,7 @@ var logPath string
 var debug bool
 
 func init() {
-	flag.StringVar(&configFilePath, "config", "/etc/photocache/development.json",
+	flag.StringVar(&configFilePath, "config", "/etc/photocache/config.yml",
 		"Full path of the configuration JSON file")
 }
 
