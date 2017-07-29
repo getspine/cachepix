@@ -1,7 +1,7 @@
 FROM golang:1.8
 MAINTAINER Steve Salevan <steve.salevan@gmail.com>
 
-ENV GLIDE_VERSION 0.12.3
+ENV GLIDE_VERSION v0.12.3
 
 VOLUME /etc/photocache /var/lib/photocache
 
@@ -20,9 +20,13 @@ RUN curl -fsSL "$GLIDE_DOWNLOAD_URL" -o glide.zip \
 RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.0.0/dumb-init_1.0.0_amd64.deb
 RUN dpkg -i dumb-init_*.deb
 
-WORKDIR /go/src/app
+WORKDIR /go/src/github.com/ssalevan/photocache
 
-ENV GLIDE_HOME /go/src/app
+ENV GLIDE_HOME /go/src/github.com/ssalevan/photocache
+
 COPY . .
+RUN glide install \
+  && cd /go \
+  && go-wrapper build github.com/ssalevan/photocache
 
-ENTRYPOINT ["dumb-init", "/go/src/app/docker-run.sh"]
+ENTRYPOINT ["dumb-init", "/go/photocache"]

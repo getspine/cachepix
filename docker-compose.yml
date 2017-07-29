@@ -1,0 +1,8 @@
+version: '2'
+services:
+  photocache:
+    build: .
+    image: philcollins/photocache
+    privileged: true
+    ports:
+      - "80:12345"
