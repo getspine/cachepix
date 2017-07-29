@@ -17,8 +17,14 @@ Getting Started
 Developer Instructions
 ----------------------
 
-Building
---------
+Building/Running with docker-compose
+------------------------------------
+
+1. Ensure that docker-compose is installed on your system.
+2. Run ```docker-compose up``` to build Photocache; once completed, it will listen on port 12345.
+
+Building Locally
+----------------
 
 1. Create a directory for your $GOPATH and set it, if one does not yet exist.
 

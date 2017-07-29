@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
 func NewS3Cacher(conf *config.S3CacherConfig) *S3Cacher {
@@ -24,13 +25,14 @@ type S3Cacher struct {
 
 	awsSession *session.Session
 	s3Client   *s3.S3
+	s3Uploader *s3manager.Uploader
 }
 
 func (s *S3Cacher) Init() error {
 	var err error
 
-	awsCredentials := credentials.NewStaticCredentials("photocache",
-		s.conf.SecretAccessKey, s.conf.AccessKeyId)
+	awsCredentials := credentials.NewStaticCredentials(
+		s.conf.AccessKeyId, s.conf.SecretAccessKey, "")
 	awsConfig := aws.NewConfig().WithRegion(s.conf.Region).WithCredentials(awsCredentials)
 	s.awsSession, err = session.NewSessionWithOptions(session.Options{
 		Config: *awsConfig,
@@ -40,6 +42,7 @@ func (s *S3Cacher) Init() error {
 	}
 
 	s.s3Client = s3.New(s.awsSession)
+	s.s3Uploader = s3manager.NewUploader(s.awsSession)
 
 	_, err = s.s3Client.CreateBucket(&s3.CreateBucketInput{
 		Bucket: aws.String(s.conf.Bucket),
@@ -89,10 +92,20 @@ func (s *S3Cacher) Name() string {
 }
 
 func (s *S3Cacher) Set(url string, contents []byte) error {
-	_, err := s.s3Client.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(s.conf.Bucket),
-		Key:    aws.String(url),
-		Body:   bytes.NewReader(contents),
+	result, err := s.s3Client.ListObjects(&s3.ListObjectsInput{
+		Bucket:  aws.String(s.conf.Bucket),
+		Prefix:  aws.String(url),
+		MaxKeys: aws.Int64(1),
 	})
+	if err != nil {
+		return err
+	}
+	if len(result.Contents) == 0 {
+		_, err = s.s3Uploader.Upload(&s3manager.UploadInput{
+			Bucket: aws.String(s.conf.Bucket),
+			Key:    aws.String(url),
+			Body:   bytes.NewReader(contents),
+		})
+	}
 	return err
 }

@@ -56,8 +56,16 @@ func (f *FileCacher) Name() string {
 
 func (f *FileCacher) Set(url string, contents []byte) error {
 	fileLocation := path.Join(f.conf.StorageDir, url)
+
+	// If the file exists, updates atime/mtime for TTL purposes.
+	_, err := os.Stat(fileLocation)
+	if err == nil {
+		currentTime := time.Now().UTC()
+		return os.Chtimes(fileLocation, currentTime, currentTime)
+	}
+
 	fileDir := filepath.Dir(fileLocation)
-	err := os.MkdirAll(fileDir, os.ModePerm)
+	err = os.MkdirAll(fileDir, os.ModePerm)
 	if err != nil {
 		return err
 	}

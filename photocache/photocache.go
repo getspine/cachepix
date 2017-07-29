@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mime"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 
@@ -40,6 +41,8 @@ func (p *Photocache) Init() {
 		if fetcherName == "photobucket" {
 			p.fetchers = append(p.fetchers,
 				fetchers.NewPhotobucketFetcher(p.config.PhotobucketFetcher))
+		} else {
+			log.Errorf("Unknown fetcher: %s", fetcherName)
 		}
 	}
 
@@ -67,6 +70,8 @@ func (p *Photocache) Init() {
 			p.cachers = append(p.cachers, cachers.NewMemoryCacher(p.config.MemoryCacher))
 		} else if cacherName == "s3" {
 			p.cachers = append(p.cachers, cachers.NewS3Cacher(p.config.S3Cacher))
+		} else {
+			log.Errorf("Unknown cacher: %s", cacherName)
 		}
 	}
 
@@ -85,6 +90,11 @@ func (p *Photocache) Init() {
 		cacher := p.cachers[cacherIndex]
 		log.Errorf("Disabling erroring cacher: %s", cacher.Name())
 		p.cachers = append(p.cachers[:cacherIndex], p.cachers[cacherIndex+1:]...)
+	}
+
+	if len(p.fetchers) == 0 {
+		log.Errorf("No fetchers are configured; terminating Photocache")
+		os.Exit(-1)
 	}
 
 	log.Debugf("Photocache initialized.")

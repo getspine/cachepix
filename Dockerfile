@@ -26,7 +26,6 @@ ENV GLIDE_HOME /go/src/github.com/ssalevan/photocache
 
 COPY . .
 RUN glide install \
-  && cd /go \
   && go-wrapper build github.com/ssalevan/photocache
 
-ENTRYPOINT ["dumb-init", "/go/photocache"]
+ENTRYPOINT ["dumb-init", "/go/src/github.com/ssalevan/photocache/docker-run.sh"]
