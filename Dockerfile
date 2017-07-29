@@ -17,7 +17,7 @@ RUN curl -fsSL "$GLIDE_DOWNLOAD_URL" -o glide.zip \
   && rm -rf linux-amd64 \
   && rm glide.zip
 
-RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.0.0/dumb-init_1.0.0_amd64.deb
+RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb
 RUN dpkg -i dumb-init_*.deb
 
 WORKDIR /go/src/github.com/ssalevan/photocache
@@ -26,6 +26,6 @@ ENV GLIDE_HOME /go/src/github.com/ssalevan/photocache
 
 COPY . .
 RUN glide install \
-  && go-wrapper build github.com/ssalevan/photocache
+  && go-wrapper install
 
 ENTRYPOINT ["dumb-init", "/go/src/github.com/ssalevan/photocache/docker-run.sh"]
