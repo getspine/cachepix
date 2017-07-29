@@ -19,7 +19,7 @@ const (
 )
 
 // Launch : starts a new Photocache process and loads a config
-func Launch(cfg *config.Config) {
+func Launch(cfg *config.PhotocacheConfig) {
 	rand.Seed(time.Now().Unix())
 
 	// Starts the safe process.

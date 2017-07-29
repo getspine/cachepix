@@ -12,7 +12,7 @@ Getting Started
 1. Sign up for a [Spine](https://spi.ne) account if you do not yet have one.
 2. Follow the CLI setup instructions provided within the signup e-mail.
 3. Run ```spine deploy```.
-4. Update all your links to point to ```http://photocache-<your Spine username>/<URL of photo, without http://>```
+4. Update all your links to point to ```http://photocache-<your Spine username>.spi.ne/<URL of photo, without http://>```
 
 Developer Instructions
 ----------------------

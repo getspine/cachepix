@@ -1,80 +1,48 @@
 package config
 
 import (
-	"io/ioutil"
-	"os"
+	"strings"
 
-	"github.com/jinzhu/copier"
-	"gopkg.in/yaml.v2"
+	log "github.com/sirupsen/logrus"
+
+	"github.com/spf13/viper"
 )
 
-type Config struct {
-	EnableHTTPS bool `yaml:"enable_https,omitempty"`
-
-	HTTPListenPort  int64 `yaml:"http_listen_port,omitempty"`
-	HTTPSListenPort int64 `yaml:"https_listen_port,omitempty"`
-
-	FileServerPort int64 `yaml:"file_server_port,omitempty"`
-
-	HealthcheckPort    int64 `yaml:"healthcheck_port,omitempty"`
-	HealthcheckTLSPort int64 `yaml:"healthcheck_tls_port,omitempty"`
-
-	SSLCert string `yaml:"ssl_cert,omitempty"`
-	SSLKey  string `yaml:"ssl_key,omitempty"`
-
-	Cachers  []string `yaml:"cachers,omitempty"`
-	Fetchers []string `yaml:"fetchers,omitempty"`
-
-	FileCacher         *FileCacherConfig         `yaml:"file_cacher,omitempty"`
-	PhotobucketFetcher *PhotobucketFetcherConfig `yaml:"photobucket_fetcher,omitempty"`
+type Config interface {
+	ConfigureViper()
+	ReadConfig()
 }
 
-var DefaultConfig = &Config{
-	EnableHTTPS:        false,
-	HTTPListenPort:     12345,
-	HTTPSListenPort:    443,
-	FileServerPort:     20025,
-	HealthcheckPort:    20026,
-	HealthcheckTLSPort: 20027,
-	SSLCert:            "/etc/photocache/photocache.crt",
-	SSLKey:             "/etc/photocache/photocache.key",
-	Cachers:            []string{"file"},
-	Fetchers:           []string{"photobucket"},
-	FileCacher:         DefaultFileCacherConfig,
-	PhotobucketFetcher: DefaultPhotobucketFetcherConfig,
+type ConfigBase struct{}
+
+func (c *ConfigBase) setConfig(key string, value interface{}) {
+	viper.SetDefault(key, value)
+	viper.BindEnv(key, "PCACHE_"+strings.ToUpper(strings.Replace(key, ".", "_", -1)))
 }
 
-func (config *Config) FromFile(filePath string) error {
-	content, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return err
-	}
-	newConf := &Config{}
-	err = yaml.Unmarshal(content, newConf)
-	if err != nil {
-		return err
-	}
-	err = copier.Copy(config, newConf)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+func init() {
+	viper.SetConfigName("config")
+	viper.AddConfigPath("/etc/photocache/")
+	viper.AddConfigPath("$HOME/.photocache")
+	viper.AddConfigPath(".")
 
-func FromFile(filePath string) (*Config, error) {
-	conf := &Config{}
-	err := copier.Copy(conf, DefaultConfig)
+	viper.SetEnvPrefix("pcache")
+
+	DefaultPhotocacheConfig.ConfigureViper()
+
+	err := viper.ReadInConfig()
 	if err != nil {
-		return nil, err
+		log.Infof("No config file found, using defaults and environment overrides:%v",
+			err)
 	}
 
-	_, err = os.Stat(filePath)
-	if err == nil {
-		err := conf.FromFile(filePath)
-		if err != nil {
-			return nil, err
-		}
-	}
+	log.SetLevel(log.InfoLevel)
 
-	return conf, nil
+	configuredLevel, err := log.ParseLevel(viper.GetString("loglevel"))
+	if err != nil {
+		log.Errorf("Could not parse loglevel: %s", viper.GetString("loglevel"))
+	} else {
+		// Sets master logrus loglevel from configured value.
+		log.SetLevel(configuredLevel)
+	}
 }

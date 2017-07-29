@@ -1,7 +1,6 @@
 package fetchers
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -25,15 +24,15 @@ type PhotobucketFetcher struct {
 	httpClient *http.Client
 }
 
+func (f *PhotobucketFetcher) Init() error {
+	return nil
+}
+
 func (f *PhotobucketFetcher) MatchesURL(url string) bool {
-	return URLEmbeddedRegex.MatchString(url)
+	return URLEmbeddedRegex.MatchString(url) && strings.HasPrefix(url, f.conf.Prefix)
 }
 
 func (f *PhotobucketFetcher) Get(url string) ([]byte, error) {
-	if !URLEmbeddedRegex.MatchString(url) || !strings.HasPrefix(url, f.conf.Prefix) {
-		return []byte{}, errors.New("Invalid URL")
-	}
-
 	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s", url), nil)
 	if err != nil {
 		return []byte{}, err

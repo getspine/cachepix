@@ -1,8 +1,8 @@
 package cachers
 
 type Cacher interface {
-	Get(url string) ([]byte, error)
-	Hit(url string) bool
+	Init() error
+	Get(url string) (bool, []byte, error)
 	Name() string
 	Set(url string, contents []byte) error
 }

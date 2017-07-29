@@ -1,9 +1,16 @@
 ---
 clusters:
   - photocache:
+      environment:
+        PCACHE_CACHERS: "memory,file"
       image: philcollins/photocache
       ports:
         - port: 80
+
+  - photoshovel:
+      environment:
+        BASE_URL: 
+      image: philcollins/photoshovel
 
 balancers:
   - photocache:
