@@ -3,6 +3,10 @@ services:
   photocache:
     build: .
     image: philcollins/photocache
+    environment:
+      - PCACHE_REBUILD=true
+    volumes:
+      - .:/go/src/github.com/ssalevan/photocache
     privileged: true
     ports:
-      - "80:12345"
+      - "12345:12345"
