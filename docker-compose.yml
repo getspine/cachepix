@@ -1,12 +1,12 @@
 version: '2'
 services:
-  photocache:
+  cachepix:
     build: .
-    image: philcollins/photocache
+    image: philcollins/cachepix
     environment:
       - PCACHE_REBUILD=true
     volumes:
-      - .:/go/src/github.com/ssalevan/photocache
+      - .:/go/src/github.com/ssalevan/cachepix
     privileged: true
     ports:
       - "12345:12345"

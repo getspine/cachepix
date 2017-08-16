@@ -1,20 +1,19 @@
 ---
 clusters:
-  - photocache:
+  - cachepix:
+      image: philcollins/cachepix
       environment:
         PCACHE_CACHERS: "memory,file"
-      image: philcollins/photocache
+      volumes:
+        - mount_location: /var/lib/cachepix
+          size_gb: 20
       ports:
-        - port: 80
-
-  - photoshovel:
-      environment:
-        BASE_URL: 
-      image: philcollins/photoshovel
+        - port: 12345
 
 balancers:
-  - photocache:
+  - cachepix:
       synapses:
-        - resource: photocache
+        - resource: cachepix
           protocol: http
-          remote_port: 80
+          port: 80
+          remote_port: 12345

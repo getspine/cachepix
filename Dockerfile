@@ -3,7 +3,7 @@ MAINTAINER Steve Salevan <steve.salevan@gmail.com>
 
 ENV GLIDE_VERSION v0.12.3
 
-VOLUME /etc/photocache /var/lib/photocache
+VOLUME /etc/cachepix /var/lib/cachepix
 
 RUN apt-get update \
   && apt-get install -y unzip --no-install-recommends \
@@ -20,12 +20,12 @@ RUN curl -fsSL "$GLIDE_DOWNLOAD_URL" -o glide.zip \
 RUN wget https://github.com/Yelp/dumb-init/releases/download/v1.2.0/dumb-init_1.2.0_amd64.deb
 RUN dpkg -i dumb-init_*.deb
 
-WORKDIR /go/src/github.com/ssalevan/photocache
+WORKDIR /go/src/github.com/ssalevan/cachepix
 
-ENV GLIDE_HOME /go/src/github.com/ssalevan/photocache
+ENV GLIDE_HOME /go/src/github.com/ssalevan/cachepix
 
 COPY . .
 RUN glide install \
   && go-wrapper install
 
-ENTRYPOINT ["dumb-init", "/go/src/github.com/ssalevan/photocache/docker-run.sh"]
+ENTRYPOINT ["dumb-init", "/go/src/github.com/ssalevan/cachepix/docker-run.sh"]

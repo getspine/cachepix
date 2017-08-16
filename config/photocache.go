@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var DefaultPhotocacheConfig = &PhotocacheConfig{
+var DefaultCachepixConfig = &CachepixConfig{
 	Loglevel: "info",
 
 	EnableHTTPS:        false,
@@ -17,8 +17,8 @@ var DefaultPhotocacheConfig = &PhotocacheConfig{
 	HTTPSListenPort:    12346,
 	HealthcheckPort:    20026,
 	HealthcheckTLSPort: 20027,
-	SSLCert:            "/etc/photocache/photocache.crt",
-	SSLKey:             "/etc/photocache/photocache.key",
+	SSLCert:            "/etc/cachepix/cachepix.crt",
+	SSLKey:             "/etc/cachepix/cachepix.key",
 
 	Cachers:  []string{"memory", "file"},
 	Fetchers: []string{"photobucket"},
@@ -30,8 +30,8 @@ var DefaultPhotocacheConfig = &PhotocacheConfig{
 	PhotobucketFetcher: DefaultPhotobucketFetcherConfig,
 }
 
-func NewPhotocacheConfig() *PhotocacheConfig {
-	newConfig := &PhotocacheConfig{
+func NewCachepixConfig() *CachepixConfig {
+	newConfig := &CachepixConfig{
 		FileCacher:   DefaultFileCacherConfig,
 		MemoryCacher: DefaultMemoryCacherConfig,
 		S3Cacher:     DefaultS3CacherConfig,
@@ -41,11 +41,11 @@ func NewPhotocacheConfig() *PhotocacheConfig {
 	newConfig.ReadConfig()
 
 	configString, _ := json.MarshalIndent(newConfig, "", "  ")
-	log.Debugf("Photocache config: %s", configString)
+	log.Debugf("Cachepix config: %s", configString)
 	return newConfig
 }
 
-type PhotocacheConfig struct {
+type CachepixConfig struct {
 	ConfigBase
 
 	Loglevel string
@@ -71,17 +71,17 @@ type PhotocacheConfig struct {
 	PhotobucketFetcher *PhotobucketFetcherConfig
 }
 
-func (p *PhotocacheConfig) ConfigureViper() {
-	p.setConfig("loglevel", DefaultPhotocacheConfig.Loglevel)
-	p.setConfig("enable_https", DefaultPhotocacheConfig.EnableHTTPS)
-	p.setConfig("http_listen_port", DefaultPhotocacheConfig.HTTPListenPort)
-	p.setConfig("https_listen_port", DefaultPhotocacheConfig.HTTPSListenPort)
-	p.setConfig("healthcheck_port", DefaultPhotocacheConfig.HealthcheckPort)
-	p.setConfig("healthcheck_tls_port", DefaultPhotocacheConfig.HealthcheckTLSPort)
-	p.setConfig("ssl_cert", DefaultPhotocacheConfig.SSLCert)
-	p.setConfig("ssl_key", DefaultPhotocacheConfig.SSLKey)
-	p.setConfig("cachers", strings.Join(DefaultPhotocacheConfig.Cachers, ","))
-	p.setConfig("fetchers", strings.Join(DefaultPhotocacheConfig.Fetchers, ","))
+func (p *CachepixConfig) ConfigureViper() {
+	p.setConfig("loglevel", DefaultCachepixConfig.Loglevel)
+	p.setConfig("enable_https", DefaultCachepixConfig.EnableHTTPS)
+	p.setConfig("http_listen_port", DefaultCachepixConfig.HTTPListenPort)
+	p.setConfig("https_listen_port", DefaultCachepixConfig.HTTPSListenPort)
+	p.setConfig("healthcheck_port", DefaultCachepixConfig.HealthcheckPort)
+	p.setConfig("healthcheck_tls_port", DefaultCachepixConfig.HealthcheckTLSPort)
+	p.setConfig("ssl_cert", DefaultCachepixConfig.SSLCert)
+	p.setConfig("ssl_key", DefaultCachepixConfig.SSLKey)
+	p.setConfig("cachers", strings.Join(DefaultCachepixConfig.Cachers, ","))
+	p.setConfig("fetchers", strings.Join(DefaultCachepixConfig.Fetchers, ","))
 
 	DefaultFileCacherConfig.ConfigureViper()
 	DefaultMemoryCacherConfig.ConfigureViper()
@@ -90,7 +90,7 @@ func (p *PhotocacheConfig) ConfigureViper() {
 	DefaultPhotobucketFetcherConfig.ConfigureViper()
 }
 
-func (p *PhotocacheConfig) ReadConfig() {
+func (p *CachepixConfig) ReadConfig() {
 	p.Loglevel = viper.GetString("loglevel")
 	p.EnableHTTPS = viper.GetBool("enable_https")
 	p.HTTPListenPort = viper.GetInt64("http_listen_port")

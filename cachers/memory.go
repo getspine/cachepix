@@ -5,7 +5,7 @@ import (
 
 	"github.com/allegro/bigcache"
 
-	"github.com/ssalevan/photocache/config"
+	"github.com/ssalevan/cachepix/config"
 )
 
 var Eternity = time.Duration(1<<63 - 1)

@@ -1,4 +1,4 @@
-package: github.com/ssalevan/photocache
+package: github.com/ssalevan/cachepix
 license: MIT
 owners:
 - name: Steve Salevan

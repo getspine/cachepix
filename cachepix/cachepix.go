@@ -10,33 +10,33 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/ssalevan/photocache/cachers"
-	"github.com/ssalevan/photocache/common"
-	"github.com/ssalevan/photocache/config"
-	"github.com/ssalevan/photocache/fetchers"
+	"github.com/ssalevan/cachepix/cachers"
+	"github.com/ssalevan/cachepix/common"
+	"github.com/ssalevan/cachepix/config"
+	"github.com/ssalevan/cachepix/fetchers"
 )
 
-// Photocache : Interface that ties process and config
-type Photocache struct {
+// Cachepix : Interface that ties process and config
+type Cachepix struct {
 	common.BackgroundProcess
 
-	config *config.PhotocacheConfig
+	config *config.CachepixConfig
 
 	cachers  []cachers.Cacher
 	fetchers []fetchers.Fetcher
 }
 
-// NewPhotocache : crates a new Photocache process with a config
-func NewPhotocache(config *config.PhotocacheConfig) *Photocache {
-	photocache := &Photocache{
+// NewCachepix : crates a new Cachepix process with a config
+func NewCachepix(config *config.CachepixConfig) *Cachepix {
+	cachepix := &Cachepix{
 		config: config,
 	}
-	photocache.InitProcess("Photocache")
-	photocache.Init()
-	return photocache
+	cachepix.InitProcess("Cachepix")
+	cachepix.Init()
+	return cachepix
 }
 
-func (p *Photocache) Init() {
+func (p *Cachepix) Init() {
 	for _, fetcherName := range p.config.Fetchers {
 		if fetcherName == "photobucket" {
 			p.fetchers = append(p.fetchers,
@@ -93,14 +93,14 @@ func (p *Photocache) Init() {
 	}
 
 	if len(p.fetchers) == 0 {
-		log.Errorf("No fetchers are configured; terminating Photocache")
+		log.Errorf("No fetchers are configured; terminating Cachepix")
 		os.Exit(-1)
 	}
 
-	log.Debugf("Photocache initialized.")
+	log.Debugf("Cachepix initialized.")
 }
 
-func (r *Photocache) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (r *Cachepix) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	mediaURL := req.URL.Path[1:]
 
 	var data []byte
@@ -163,7 +163,7 @@ func (r *Photocache) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 // Run : starts the actual routing
-func (r *Photocache) Run() {
+func (r *Cachepix) Run() {
 	r.Wg.Add(1)
 	defer r.Wg.Done()
 
@@ -171,7 +171,7 @@ func (r *Photocache) Run() {
 
 	// Healthcheck servers are started on both HTTP and HTTPS to satisfy ELB constraints.
 	go func() {
-		log.Infof("Starting Photocache healthcheck server on port: %d",
+		log.Infof("Starting Cachepix healthcheck server on port: %d",
 			r.config.HealthcheckPort)
 		err := http.ListenAndServe(fmt.Sprintf(":%d", r.config.HealthcheckPort),
 			healthcheckServer)
@@ -181,7 +181,7 @@ func (r *Photocache) Run() {
 	}()
 
 	go func() {
-		log.Infof("Starting Photocache HTTP server on port: %d", r.config.HTTPListenPort)
+		log.Infof("Starting Cachepix HTTP server on port: %d", r.config.HTTPListenPort)
 		err := http.ListenAndServe(fmt.Sprintf(":%d", r.config.HTTPListenPort), r)
 		if err != nil {
 			log.Fatalf("Could not start HTTP server: %v", err)
@@ -190,7 +190,7 @@ func (r *Photocache) Run() {
 
 	if r.config.EnableHTTPS {
 		go func() {
-			log.Infof("Starting Photocache healthcheck TLS server on port: %d",
+			log.Infof("Starting Cachepix healthcheck TLS server on port: %d",
 				r.config.HealthcheckTLSPort)
 			err := http.ListenAndServeTLS(fmt.Sprintf(":%d", r.config.HealthcheckTLSPort),
 				r.config.SSLCert, r.config.SSLKey, healthcheckServer)
@@ -200,7 +200,7 @@ func (r *Photocache) Run() {
 		}()
 
 		go func() {
-			log.Infof("Starting Photocache HTTPS server on port: %d", r.config.HTTPSListenPort)
+			log.Infof("Starting Cachepix HTTPS server on port: %d", r.config.HTTPSListenPort)
 			err := http.ListenAndServeTLS(fmt.Sprintf(":%d", r.config.HTTPSListenPort),
 				r.config.SSLCert, r.config.SSLKey, r)
 			if err != nil {

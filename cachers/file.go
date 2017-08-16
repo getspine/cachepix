@@ -9,7 +9,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/ssalevan/photocache/config"
+	"github.com/ssalevan/cachepix/config"
 )
 
 func NewFileCacher(conf *config.FileCacherConfig) *FileCacher {

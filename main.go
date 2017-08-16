@@ -3,16 +3,16 @@ package main
 import (
 	log "github.com/sirupsen/logrus"
 
-	"github.com/ssalevan/photocache/app"
-	"github.com/ssalevan/photocache/config"
+	"github.com/ssalevan/cachepix/app"
+	"github.com/ssalevan/cachepix/config"
 )
 
 func main() {
-	log.Debug("Starting Photocache application...")
+	log.Debug("Starting Cachepix application...")
 
-	// Loads the Photocache configuration.
-	conf := config.NewPhotocacheConfig()
+	// Loads the Cachepix configuration.
+	conf := config.NewCachepixConfig()
 
-	// Launches the Photocache application.
+	// Launches the Cachepix application.
 	app.Launch(conf)
 }

@@ -1,5 +1,5 @@
-Photocache
-==========
+Cachepix
+========
 
 Caching proxy designed to retrieve photos from popular photo services and store
 them locally.
@@ -12,7 +12,7 @@ Getting Started
 1. Sign up for a [Spine](https://spi.ne) account if you do not yet have one.
 2. Follow the CLI setup instructions provided within the signup e-mail.
 3. Run ```spine deploy```.
-4. Update all your links to point to ```http://photocache-<your Spine username>.spi.ne/<URL of photo, without http://>```
+4. Update all your links to point to ```http://cachepix-<your Spine username>.spi.ne/<URL of photo, without http://>```
 
 Developer Instructions
 ----------------------
@@ -21,7 +21,7 @@ Building/Running with docker-compose
 ------------------------------------
 
 1. Ensure that docker-compose is installed on your system.
-2. Run ```docker-compose up``` to build Photocache; once completed, it will listen on port 12345.
+2. Run ```docker-compose up``` to build Cachepix; once completed, it will listen on port 12345.
 
 Building Locally
 ----------------
@@ -37,7 +37,7 @@ export GOPATH=~/go
 
 ```
 mkdir -p "$GOPATH/src/github.com/ssalevan"
-ln -s "$(pwd)" "$GOPATH/src/github.com/ssalevan/photocache"
+ln -s "$(pwd)" "$GOPATH/src/github.com/ssalevan/cachepix"
 ```
 
 3. Install Glide:

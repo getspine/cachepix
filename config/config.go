@@ -22,13 +22,13 @@ func (c *ConfigBase) setConfig(key string, value interface{}) {
 
 func init() {
 	viper.SetConfigName("config")
-	viper.AddConfigPath("/etc/photocache/")
-	viper.AddConfigPath("$HOME/.photocache")
+	viper.AddConfigPath("/etc/cachepix/")
+	viper.AddConfigPath("$HOME/.cachepix")
 	viper.AddConfigPath(".")
 
 	viper.SetEnvPrefix("pcache")
 
-	DefaultPhotocacheConfig.ConfigureViper()
+	DefaultCachepixConfig.ConfigureViper()
 
 	err := viper.ReadInConfig()
 	if err != nil {

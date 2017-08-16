@@ -9,22 +9,22 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/ssalevan/photocache/common"
-	"github.com/ssalevan/photocache/config"
-	cache "github.com/ssalevan/photocache/photocache"
+	cache "github.com/ssalevan/cachepix/cachepix"
+	"github.com/ssalevan/cachepix/common"
+	"github.com/ssalevan/cachepix/config"
 )
 
 const (
-	photocacheKillWait time.Duration = 15 * time.Second
+	cachepixKillWait time.Duration = 15 * time.Second
 )
 
-// Launch : starts a new Photocache process and loads a config
-func Launch(cfg *config.PhotocacheConfig) {
+// Launch : starts a new Cachepix process and loads a config
+func Launch(cfg *config.CachepixConfig) {
 	rand.Seed(time.Now().Unix())
 
 	// Starts the safe process.
-	photocache := cache.NewPhotocache(cfg)
-	common.StartProcess(photocache)
+	cachepix := cache.NewCachepix(cfg)
+	common.StartProcess(cachepix)
 
 	// Waits to receive an interruption signal.
 	signalChan := make(chan os.Signal, 1)
@@ -34,14 +34,14 @@ func Launch(cfg *config.PhotocacheConfig) {
 		log.Infof("Stop requested (%v); shutting down...", signal)
 	}
 
-	// Interrupt received, kills Photocache.
-	go photocache.Stop()
+	// Interrupt received, kills Cachepix.
+	go cachepix.Stop()
 	select {
-	case <-time.After(photocacheKillWait):
-		log.Warningf("Forcibly dying after waiting for Photocache to stop...")
-	case <-photocache.Stopped:
+	case <-time.After(cachepixKillWait):
+		log.Warningf("Forcibly dying after waiting for Cachepix to stop...")
+	case <-cachepix.Stopped:
 	}
 
-	log.Debugf("Photocache shut down; exiting with a status code of 0")
+	log.Debugf("Cachepix shut down; exiting with a status code of 0")
 	os.Exit(0)
 }

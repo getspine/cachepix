@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ssalevan/photocache/config"
+	"github.com/ssalevan/cachepix/config"
 )
 
 var URLEmbeddedRegex = regexp.MustCompile(`(.*.photobucket.com/albums/.*/.*/)`)

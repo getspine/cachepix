@@ -29,8 +29,8 @@ coverage-all.out
 server
 vendor
 
-github.com/ssalevan/photocache
-github.com/ssalevan/photocachecli
+github.com/ssalevan/cachepix
+github.com/ssalevan/cachepixcli
 
 #editor cruft
 .idea

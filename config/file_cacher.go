@@ -14,7 +14,7 @@ type FileCacherConfig struct {
 }
 
 var DefaultFileCacherConfig = &FileCacherConfig{
-	StorageDir: "/var/lib/photocache",
+	StorageDir: "/var/lib/cachepix",
 	EnableTTL:  false,
 	TTLSecs:    1209600, // Two weeks
 	Mode:       0644,
