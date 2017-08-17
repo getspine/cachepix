@@ -23,7 +23,6 @@ _testmain.go
 *.test
 *.prof
 
-glide.lock
 coverage.out
 coverage-all.out
 server
