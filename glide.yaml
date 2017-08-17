@@ -1,8 +1,8 @@
-package: github.com/ssalevan/cachepix
+package: github.com/getspine/cachepix
 license: MIT
 owners:
 - name: Steve Salevan
-  email: steve.salevan@gmail.com
+  email: steve@spi.ne
 import:
 - package: github.com/allegro/bigcache
 - package: github.com/aws/aws-sdk-go
